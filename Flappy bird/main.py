@@ -4,31 +4,27 @@ pygame.init()
 window_width = 1024#display size
 window_height = 768#display size
 game_display = pygame.display.set_mode((window_width, window_height))#display size
-#obs=obsticle
 red = (255,0,0)#colour
 pink = (255, 102, 179)
 
 
-
-    
-
 def drawtext(text, x, y, color, size): #font 
     myfont = pygame.font.SysFont('Mongolian Baiti', size)#font
     textsurface = myfont.render(text,False, color)
-    game_display.blit(textsurface,(x, y))#
+    game_display.blit(textsurface,(x, y))
 
 
 def drawtext2(text, x, y, color, size): #font 
     myfont = pygame.font.SysFont('Algerian', size)#font
     textsurface = myfont.render(text,False, color)
-    game_display.blit(textsurface,(x, y))#
+    game_display.blit(textsurface,(x, y))
+
 
 class Game():
     def __init__(self):
         self.disp_text = False
         self.score = 0
         
-
 
 
 class Character_bird(pygame.sprite.Sprite):#if clicked on it will choose that as waht you want aka rock
@@ -61,6 +57,7 @@ class Character_bird(pygame.sprite.Sprite):#if clicked on it will choose that as
         self.rect.y = self.next_y
 
 
+
 class Character_obs(pygame.sprite.Sprite):
     def __init__ (self,x,y,flip):
         pygame.sprite.Sprite.__init__(self)
@@ -69,17 +66,8 @@ class Character_obs(pygame.sprite.Sprite):
         self.image=pygame.transform.scale(self.image,(65,413))
         self.rect = self.image.get_rect()
         self.score_has_changed = False
-        
-
         if flip == True:
-            self.image = pygame.transform.rotate(self.image, 180)
-##            self.rect.y = -300
-##        else:
-##            self.rect.y = 550
-
-        
-        
-        
+            self.image = pygame.transform.rotate(self.image, 180)        
         self.rect.x = x
         self.rect.y = y
         self.next_x = self.rect.x
@@ -93,17 +81,6 @@ class Character_obs(pygame.sprite.Sprite):
         if self.rect.x < bird.rect.x and self.score_has_changed == False:
             #self.score_has_changed = True
             game.score = game.score + ((1/572)/2)#score
-        
-
-
-global obsticles_group
-
- 
-game = Game()
-obsticles_group = pygame.sprite.Group()
-sprite_group = pygame.sprite.Group()
-bird = Character_bird()
-sprite_group.add(bird)
 
 
 def create_new_obsticles():
@@ -125,14 +102,16 @@ def right_obs(obs_group):
     else:
         return 0
         
-    
 
 
+global obsticles_group
 
-
+game = Game()
+obsticles_group = pygame.sprite.Group()
+sprite_group = pygame.sprite.Group()
+bird = Character_bird()
+sprite_group.add(bird)
 bg = pygame.image.load("images/background.png")
-
-
 while True:
     ran_num = random.randint(0,4000)
     if ran_num >= 0 and ran_num <= 5:
@@ -152,10 +131,6 @@ while True:
             pygame.quit()
     if game.disp_text == True:
         drawtext("Bro your trash at the game.",450,100,red,30)
-
-
-
-
     sprite_group.update()
     obsticles_group.update()
     sprite_group.draw(game_display)
@@ -163,3 +138,8 @@ while True:
     drawtext2("score="+str(round(game.score,2)),25,25,pink,60)
     pygame.display.update()#
     
+
+
+
+
+
