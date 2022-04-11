@@ -6,6 +6,7 @@ window_height = 768#display size
 game_display = pygame.display.set_mode((window_width, window_height))#display size
 red = (255,0,0)#colour
 pink = (255, 102, 179)
+gravity = 0.5
 
 
 def drawtext(text, x, y, color, size): #font 
@@ -41,7 +42,7 @@ class Character_bird(pygame.sprite.Sprite):#if clicked on it will choose that as
         
 
     def update(self):
-        self.next_y=self.next_y+0.5
+        self.next_y=self.next_y+gravity
         self.rect.y = self.next_y
         death = pygame.sprite.spritecollide(self,obsticles_group,False)
         if self.rect.y > 768:
