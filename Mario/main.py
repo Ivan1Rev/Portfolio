@@ -28,6 +28,7 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.touchingFloor = False
         self.direction = "right"
         self.animation = False
+        self.last_changed = 0
         
         
 
@@ -38,19 +39,21 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
 
 
         #animation
-        if self.animation == True:
-            self.old_x, self.old_y = self.rect.x, self.rect.y
-            self.image = pygame.image.load("images/"+images[self.costume])
-            
-            self.image=pygame.transform.scale(self.image,(int(self.old_size[0]),int(self.old_size[1])))
-            self.size = self.image.get_rect().size
-            self.rect = self.image.get_rect()
-            self.rect.x, self.rect.y = self.old_x, self.old_y
-            self.costume = self.costume + 1
 
-            
-        
-            
+        if self.animation == True:
+            if pygame.time.get_ticks()-self.last_changed > 60:
+                self.old_x, self.old_y = self.rect.x, self.rect.y
+                self.image = pygame.image.load("images/"+images[self.costume])
+                self.last_changed = pygame.time.get_ticks()
+                self.image=pygame.transform.scale(self.image,(int(self.old_size[0]),int(self.old_size[1])))
+                self.size = self.image.get_rect().size
+                self.rect = self.image.get_rect()
+                self.rect.x, self.rect.y = self.old_x, self.old_y
+                self.costume = self.costume + 1
+
+
+
+
         if self.rect.y < 599:
             self.next_y=self.next_y+gravity
             self.touchingFloor = False
@@ -75,8 +78,9 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         if self.direction != "right":
             self.image = pygame.transform.flip(self.image, True, False)
             self.direction = "right"
-            
         self.move = 1
+
+
     def backwards(self):
         self.animation = True
         if self.direction != "left":
