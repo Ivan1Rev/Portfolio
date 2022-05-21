@@ -4,17 +4,31 @@ pygame.init()
 window_width = 1074#display size
 window_height = 788#display size
 game_display = pygame.display.set_mode((window_width, window_height))#display size
-gravity = 0.5
+gravity = 1.2
 GREEN = (0,255,0)
 images = ["marioR1.png","marioR2.png","marioR3.png"]
+
+
+class Coin(pygame.sprite.Sprite):#
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/coin1.png")
+        self.size = self.image.get_rect().size
+        self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.15), int(self.size[1] * 0.15)))
+        self.size = self.image.get_rect().size
+        self.rect = self.image.get_rect()
+        self.rect.x = 100
+        self.rect.y = 50
 
 
 #updated
 class ExtraMario(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((25, 25))
-        self.image.fill(GREEN)
+        #self.image = pygame.Surface((25, 25))
+        self.image = pygame.Surface([25, 25], pygame.SRCALPHA, 32)
+        self.image = self.image.convert_alpha()
+
         self.rect = self.image.get_rect()
         self.rect.center = (window_width / 2, window_height / 2)
         self.size = self.image.get_rect().size
@@ -22,7 +36,7 @@ class ExtraMario(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x = Mario.rect.x+7
-        self.rect.y = Mario.rect.y+40
+        self.rect.y = Mario.rect.y+37
 
 
 class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that as waht you want aka rock
@@ -35,8 +49,8 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.size = self.image.get_rect().size
         self.rect = self.image.get_rect()
         self.old_size = self.size
-        self.rect.x = 100
-        self.rect.y = 300
+        self.rect.x = 600
+        self.rect.y = 50
         self.next_y = self.rect.y
         self.next_x = self.rect.x
         self.move = 0
@@ -44,16 +58,13 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.direction = "right"
         self.animation = False
         self.last_changed = 0
-        
 
 
     def update(self):
-
         if self.costume > 2:
             self.costume = 0
 
         #animation
-
         if self.animation == True:
             if pygame.time.get_ticks() - self.last_changed > 60:
                 self.old_x, self.old_y = self.rect.x, self.rect.y
@@ -73,9 +84,8 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
                 self.costume = self.costume + 1
 
 
-
         self.On_the_block = pygame.sprite.spritecollide(Hitbox, obsticles_group, False, False)
-        if len(self.On_the_block)>0:
+        if len(self.On_the_block)==0 and Mario.rect.y < 620:
             print(len(self.On_the_block))
             self.next_y=self.next_y+gravity
             self.touchingFloor = False
@@ -92,7 +102,7 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
 
     def jump(self):
         if self.touchingFloor == True or self.On_the_block == True:
-            self.next_y = self.next_y - 90
+            self.next_y = self.next_y - 135
             self.rect.y = self.next_y
 
     def forward(self):
@@ -129,10 +139,11 @@ def create_new_obsticles(possiton):
 
 obsticles_group = pygame.sprite.Group()
 
-pos = [[400,550],
+pos = [[350,550],
        [500,250],
        [700,350],
-       [550,450]
+       [550,450],
+       [300,150]
        ]
 
 for p in pos:
@@ -146,11 +157,14 @@ Mario = Character_Mario()
 sprite_group = pygame.sprite.Group()
 sprite_group.add(Mario)
 
+coin = Coin() #object creation
+coin_group = pygame.sprite.Group() #sprite goup creation to store and manipulate (update, draw) sprites
+coin_group.add(coin) #add newly created object to a sprite group
+
 Hitbox = ExtraMario()
 ExtraMario = pygame.sprite.Group()
 ExtraMario.add(Hitbox)
 while True:
-    #print(Mario.touchingFloor)
     game_display.blit(bg,(0,0))
     for event in pygame.event.get():
         if event.type==pygame.KEYDOWN:
@@ -169,11 +183,17 @@ while True:
             if event.key==pygame.K_a or event.key==pygame.K_d:
                 Mario.move = 0
                 Mario.animation = False
+
     obsticles_group.update()
-    obsticles_group.draw(game_display)
     ExtraMario.update()
-    ExtraMario.draw(game_display)
+    coin_group.update()
     sprite_group.update()
+
+    obsticles_group.draw(game_display)
+    ExtraMario.draw(game_display)
+    coin_group.draw(game_display)
     sprite_group.draw(game_display)
+
+
     pygame.display.update()
 
