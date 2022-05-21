@@ -5,10 +5,25 @@ window_width = 1074#display size
 window_height = 788#display size
 game_display = pygame.display.set_mode((window_width, window_height))#display size
 gravity = 0.5
+GREEN = (0,255,0)
 images = ["marioR1.png","marioR2.png","marioR3.png"]
 
 
 #updated
+class ExtraMario(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((25, 25))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.center = (window_width / 2, window_height / 2)
+        self.size = self.image.get_rect().size
+
+
+    def update(self):
+        self.rect.x = Mario.rect.x+7
+        self.rect.y = Mario.rect.y+40
+
 
 class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that as waht you want aka rock
     def __init__(self):
@@ -30,17 +45,12 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.animation = False
         self.last_changed = 0
         
-        
 
 
     def update(self):
-        self.On_the_block = pygame.sprite.spritecollide(Mario, obsticles_group, False, False)
-
 
         if self.costume > 2:
             self.costume = 0
-
-
 
         #animation
 
@@ -64,7 +74,7 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
 
 
 
-
+        self.On_the_block = pygame.sprite.spritecollide(Hitbox, obsticles_group, False, False)
         if len(self.On_the_block)>0:
             print(len(self.On_the_block))
             self.next_y=self.next_y+gravity
@@ -128,21 +138,17 @@ pos = [[400,550],
 for p in pos:
     create_new_obsticles(p)
 
-'''
-i = 0
-while i < len(pos):
-    create_new_obsticles(pos[i])
-    i = i + 1
-'''
-
-
-
 
 bg = pygame.image.load("images/Background.png")
 bg = pygame.transform.scale(bg, (window_width, window_height))
+
+Mario = Character_Mario()
 sprite_group = pygame.sprite.Group()
-Mario = Character_Mario() 
 sprite_group.add(Mario)
+
+Hitbox = ExtraMario()
+ExtraMario = pygame.sprite.Group()
+ExtraMario.add(Hitbox)
 while True:
     #print(Mario.touchingFloor)
     game_display.blit(bg,(0,0))
@@ -165,6 +171,8 @@ while True:
                 Mario.animation = False
     obsticles_group.update()
     obsticles_group.draw(game_display)
+    ExtraMario.update()
+    ExtraMario.draw(game_display)
     sprite_group.update()
     sprite_group.draw(game_display)
     pygame.display.update()
