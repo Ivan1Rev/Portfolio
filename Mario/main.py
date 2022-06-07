@@ -7,18 +7,59 @@ game_display = pygame.display.set_mode((window_width, window_height))#display si
 gravity = 1.2
 GREEN = (0,255,0)
 images = ["marioR1.png","marioR2.png","marioR3.png"]
-
+image = ["coin1.png","coin2.png","coin3.png","coin4.png","coin5.png","coin4.png","coin3.png","coin2.png","coin1.png"]
+smallfont = pygame.font.SysFont('comicsansms',35)
+white = (255, 255, 255)
 
 class Coin(pygame.sprite.Sprite):#
     def __init__(self):
+        self.costume = 0
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("images/coin1.png")
+        self.image = pygame.image.load("images/"+image[self.costume])
         self.size = self.image.get_rect().size
-        self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.15), int(self.size[1] * 0.15)))
+        self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.06), int(self.size[1] * 0.06)))
         self.size = self.image.get_rect().size
         self.rect = self.image.get_rect()
-        self.rect.x = 100
-        self.rect.y = 50
+        self.old_size = self.size
+        self.rect.x = 700
+        self.rect.y = 100
+        self.next_y = self.rect.y
+        self.next_x = self.rect.x
+        self.gravity = 1.5
+        self.On_the_block = False
+        self.animation = False
+        self.last_changed = 0
+
+
+
+
+
+
+    def update(self):
+        self.On_the_block = pygame.sprite.spritecollide(self, obsticles_group, False, False)
+
+        if len(self.On_the_block) == 0 and self.rect.y < 620:
+            print(len(self.On_the_block))
+            self.next_y = self.next_y + gravity
+            self.touchingFloor = False
+        self.rect.y = self.next_y
+
+
+
+        if self.costume > 7:
+            self.costume = 0
+
+
+        if pygame.time.get_ticks() - self.last_changed > 100:
+            self.old_x, self.old_y = self.rect.x, self.rect.y
+            self.size = self.image.get_rect().size
+            self.rect = self.image.get_rect()
+            self.rect.x, self.rect.y = self.old_x, self.old_y
+            self.last_changed = pygame.time.get_ticks()
+            print("images/" + image[self.costume])
+            self.image = pygame.image.load("images/" + image[self.costume])
+            self.image = pygame.transform.scale(self.image, (int(self.old_size[0]), int(self.old_size[1])))
+            self.costume = self.costume + 1
 
 
 #updated
@@ -58,6 +99,7 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.direction = "right"
         self.animation = False
         self.last_changed = 0
+        self.score = 0
 
 
     def update(self):
@@ -86,7 +128,6 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
 
         self.On_the_block = pygame.sprite.spritecollide(Hitbox, obsticles_group, False, False)
         if len(self.On_the_block)==0 and Mario.rect.y < 620:
-            print(len(self.On_the_block))
             self.next_y=self.next_y+gravity
             self.touchingFloor = False
         else:
@@ -95,7 +136,7 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.rect.x = self.rect.x + self.move
         if self.rect.x > window_width:#Left
             self.rect.x = -85
-            print(self.rect.x)
+
         if self.rect.x < -100:#Left
             self.rect.x = 1047
 
@@ -132,6 +173,11 @@ class Character_obs(pygame.sprite.Sprite):
         self.rect.y = y
         self.next_x = self.rect.x
 
+
+def draw_score(score):
+    text=smallfont.render("Score: "+str(score),True, white)
+    game_display.blit(text,[0,0])
+
 def create_new_obsticles(possiton):
     obs = Character_obs(possiton[0],possiton[1], False)#550,350
     obsticles_group.add(obs)
@@ -144,6 +190,7 @@ pos = [[350,550],
        [700,350],
        [550,450],
        [300,150]
+       #[100,200]
        ]
 
 for p in pos:
@@ -184,11 +231,14 @@ while True:
                 Mario.move = 0
                 Mario.animation = False
 
+
     obsticles_group.update()
     ExtraMario.update()
     coin_group.update()
     sprite_group.update()
 
+
+    draw_score(Mario.score)
     obsticles_group.draw(game_display)
     ExtraMario.draw(game_display)
     coin_group.draw(game_display)
@@ -196,4 +246,8 @@ while True:
 
 
     pygame.display.update()
+
+
+
+
 
