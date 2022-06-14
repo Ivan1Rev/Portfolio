@@ -1,3 +1,5 @@
+import random
+
 import pygame
 pygame.init()
 pygame.init()
@@ -21,12 +23,13 @@ class Coin(pygame.sprite.Sprite):#
         self.size = self.image.get_rect().size
         self.rect = self.image.get_rect()
         self.old_size = self.size
-        self.rect.x = 700
+        self.rect.x = random.randint(0,1000)
         self.rect.y = 100
         self.next_y = self.rect.y
         self.next_x = self.rect.x
         self.gravity = 1.5
         self.On_the_block = False
+        self.Coin_alert = False
         self.animation = False
         self.last_changed = 0
 
@@ -36,14 +39,18 @@ class Coin(pygame.sprite.Sprite):#
 
 
     def update(self):
-        self.On_the_block = pygame.sprite.spritecollide(self, obsticles_group, False, False)
+        self.Coin_alert = pygame.sprite.spritecollide(self, sprite_group, False, False)
+        if len(self.Coin_alert) > 0:
+            Mario.score = Mario.score + 1
+            self.kill()
+            spawn_new_coin()
 
+
+        self.On_the_block = pygame.sprite.spritecollide(self, obsticles_group, False, False)
         if len(self.On_the_block) == 0 and self.rect.y < 620:
-            print(len(self.On_the_block))
             self.next_y = self.next_y + gravity
             self.touchingFloor = False
         self.rect.y = self.next_y
-
 
 
         if self.costume > 7:
@@ -204,10 +211,14 @@ Mario = Character_Mario()
 sprite_group = pygame.sprite.Group()
 sprite_group.add(Mario)
 
-coin = Coin() #object creation
-coin_group = pygame.sprite.Group() #sprite goup creation to store and manipulate (update, draw) sprites
-coin_group.add(coin) #add newly created object to a sprite group
 
+def spawn_new_coin():
+    global coin, coin_group
+    coin = Coin() #object creation
+    coin_group = pygame.sprite.Group() #sprite goup creation to store and manipulate (update, draw) sprites
+    coin_group.add(coin) #add newly created object to a sprite group
+
+spawn_new_coin()
 Hitbox = ExtraMario()
 ExtraMario = pygame.sprite.Group()
 ExtraMario.add(Hitbox)
