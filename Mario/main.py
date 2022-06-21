@@ -11,7 +11,9 @@ GREEN = (0,255,0)
 images = ["marioR1.png","marioR2.png","marioR3.png"]
 image = ["coin1.png","coin2.png","coin3.png","coin4.png","coin5.png","coin4.png","coin3.png","coin2.png","coin1.png"]
 smallfont = pygame.font.SysFont('comicsansms',35)
+bigfont = pygame.font.SysFont('playbill',95)
 white = (255, 255, 255)
+green = (0, 255, 0)
 
 class Coin(pygame.sprite.Sprite):#
     def __init__(self):
@@ -24,7 +26,7 @@ class Coin(pygame.sprite.Sprite):#
         self.rect = self.image.get_rect()
         self.old_size = self.size
         self.rect.x = random.randint(0,1000)
-        self.rect.y = 100
+        self.rect.y = -100
         self.next_y = self.rect.y
         self.next_x = self.rect.x
         self.gravity = 1.5
@@ -47,7 +49,7 @@ class Coin(pygame.sprite.Sprite):#
 
 
         self.On_the_block = pygame.sprite.spritecollide(self, obsticles_group, False, False)
-        if len(self.On_the_block) == 0 and self.rect.y < 620:
+        if len(self.On_the_block) == 0 and self.rect.y < 639:
             self.next_y = self.next_y + gravity
             self.touchingFloor = False
         self.rect.y = self.next_y
@@ -63,7 +65,6 @@ class Coin(pygame.sprite.Sprite):#
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = self.old_x, self.old_y
             self.last_changed = pygame.time.get_ticks()
-            print("images/" + image[self.costume])
             self.image = pygame.image.load("images/" + image[self.costume])
             self.image = pygame.transform.scale(self.image, (int(self.old_size[0]), int(self.old_size[1])))
             self.costume = self.costume + 1
@@ -185,10 +186,17 @@ def draw_score(score):
     text=smallfont.render("Score: "+str(score),True, white)
     game_display.blit(text,[0,0])
 
+def draw_game_over():
+    text=bigfont.render("Game Over ",True, GREEN)
+    game_display.blit(text,[450,100])
+
+
 def create_new_obsticles(possiton):
     obs = Character_obs(possiton[0],possiton[1], False)#550,350
     obsticles_group.add(obs)
 
+def end():
+    Mario.kill()
 
 obsticles_group = pygame.sprite.Group()
 
@@ -218,6 +226,11 @@ def spawn_new_coin():
     coin_group = pygame.sprite.Group() #sprite goup creation to store and manipulate (update, draw) sprites
     coin_group.add(coin) #add newly created object to a sprite group
 
+
+
+
+
+
 spawn_new_coin()
 Hitbox = ExtraMario()
 ExtraMario = pygame.sprite.Group()
@@ -242,7 +255,10 @@ while True:
                 Mario.move = 0
                 Mario.animation = False
 
+    if Mario.score>19:
+#       print "draw_game_over"
 
+        end()
     obsticles_group.update()
     ExtraMario.update()
     coin_group.update()
@@ -250,6 +266,7 @@ while True:
 
 
     draw_score(Mario.score)
+    draw_game_over()
     obsticles_group.draw(game_display)
     ExtraMario.draw(game_display)
     coin_group.draw(game_display)
