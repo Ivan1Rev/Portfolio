@@ -11,9 +11,10 @@ GREEN = (0,255,0)
 images = ["marioR1.png","marioR2.png","marioR3.png"]
 image = ["coin1.png","coin2.png","coin3.png","coin4.png","coin5.png","coin4.png","coin3.png","coin2.png","coin1.png"]
 smallfont = pygame.font.SysFont('comicsansms',35)
-bigfont = pygame.font.SysFont('playbill',95)
+bigfont = pygame.font.SysFont('OCR A Extended',150)
 white = (255, 255, 255)
 green = (0, 255, 0)
+black = (0,0,0)
 
 class Coin(pygame.sprite.Sprite):#
     def __init__(self):
@@ -188,15 +189,14 @@ def draw_score(score):
 
 def draw_game_over():
     text=bigfont.render("Game Over ",True, GREEN)
-    game_display.blit(text,[450,100])
+    pygame.draw.rect(game_display,black, (130,100,850,150))
+    game_display.blit(text, [150, 100])
 
 
 def create_new_obsticles(possiton):
     obs = Character_obs(possiton[0],possiton[1], False)#550,350
     obsticles_group.add(obs)
 
-def end():
-    Mario.kill()
 
 obsticles_group = pygame.sprite.Group()
 
@@ -229,8 +229,6 @@ def spawn_new_coin():
 
 
 
-
-
 spawn_new_coin()
 Hitbox = ExtraMario()
 ExtraMario = pygame.sprite.Group()
@@ -255,23 +253,19 @@ while True:
                 Mario.move = 0
                 Mario.animation = False
 
-    if Mario.score>19:
-#       print "draw_game_over"
+    if Mario.score<20:
+        obsticles_group.update()
+        ExtraMario.update()
+        coin_group.update()
+        sprite_group.update()
 
-        end()
-    obsticles_group.update()
-    ExtraMario.update()
-    coin_group.update()
-    sprite_group.update()
-
-
-    draw_score(Mario.score)
-    draw_game_over()
-    obsticles_group.draw(game_display)
-    ExtraMario.draw(game_display)
-    coin_group.draw(game_display)
-    sprite_group.draw(game_display)
-
+        draw_score(Mario.score)
+        obsticles_group.draw(game_display)
+        ExtraMario.draw(game_display)
+        coin_group.draw(game_display)
+        sprite_group.draw(game_display)
+    else:
+        draw_game_over()
 
     pygame.display.update()
 
