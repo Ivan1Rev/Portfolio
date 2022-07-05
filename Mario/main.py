@@ -1,8 +1,8 @@
 import random
-
 import pygame
+
 pygame.init()
-pygame.init()
+
 window_width = 1074#display size
 window_height = 788#display size
 game_display = pygame.display.set_mode((window_width, window_height))#display size
@@ -15,6 +15,22 @@ bigfont = pygame.font.SysFont('OCR A Extended',150)
 white = (255, 255, 255)
 green = (0, 255, 0)
 black = (0,0,0)
+
+
+
+def write_H_score():
+    f = open("highscore.txt","w")
+    f.write(str(Mario.score))
+    f.close()
+
+def read_H_score():
+    f = open("highscore.txt","r")
+    data = f.read()
+    f.close()
+    return data
+
+
+
 
 class Coin(pygame.sprite.Sprite):#
     def __init__(self):
@@ -227,6 +243,12 @@ def spawn_new_coin():
     coin_group.add(coin) #add newly created object to a sprite group
 
 
+try:
+    highscore = int(read_H_score())
+except FileNotFoundError:
+    print("file not found")
+    write_H_score()
+
 
 
 spawn_new_coin()
@@ -266,6 +288,9 @@ while True:
         sprite_group.draw(game_display)
     else:
         draw_game_over()
+        if highscore<Mario.score:
+            write_H_score()
+            print("score")
 
     pygame.display.update()
 
