@@ -30,6 +30,26 @@ def read_H_score():
     return data
 
 
+class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as waht you want aka rock
+    def __init__(self):
+        self.costume = 0
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/goombaM.png")
+        self.size = self.image.get_rect().size
+        self.image=pygame.transform.scale(self.image,(int(self.size[0]*0.21),int(self.size[1]*0.21)))
+        self.size = self.image.get_rect().size
+        self.rect = self.image.get_rect()
+        self.old_size = self.size
+        self.rect.x = 600
+        self.rect.y = 630
+        self.next_y = self.rect.y
+        self.next_x = self.rect.x
+        self.move = 0
+        self.touchingFloor = False
+        self.direction = "right"
+        self.animation = False
+        self.last_changed = 0
+        self.score = 0
 
 
 class Coin(pygame.sprite.Sprite):#
@@ -231,9 +251,15 @@ for p in pos:
 bg = pygame.image.load("images/Background.png")
 bg = pygame.transform.scale(bg, (window_width, window_height))
 
+
+
 Mario = Character_Mario()
 sprite_group = pygame.sprite.Group()
 sprite_group.add(Mario)
+
+Goomba = EnemyGoomba()
+Esprite_group = pygame.sprite.Group()
+Esprite_group.add(Goomba)
 
 
 def spawn_new_coin():
@@ -280,12 +306,15 @@ while True:
         ExtraMario.update()
         coin_group.update()
         sprite_group.update()
+        Esprite_group.update()
 
         draw_score(Mario.score)
         obsticles_group.draw(game_display)
         ExtraMario.draw(game_display)
         coin_group.draw(game_display)
         sprite_group.draw(game_display)
+        Esprite_group.draw(game_display)
+
     else:
         draw_game_over()
         if highscore<Mario.score:
@@ -293,6 +322,7 @@ while True:
             print("score")
 
     pygame.display.update()
+
 
 
 
