@@ -50,6 +50,17 @@ class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as wa
         self.animation = False
         self.last_changed = 0
         self.score = 0
+        self.ch = [-1,1]
+        self.direction = random.choice(self.ch)
+
+
+    def update(self):
+        self.rect.x = self.rect.x + self.direction
+
+        if self.rect.x+50 > window_width or self.rect.x < 0:  # s to make is bounce of the edges
+            self.direction = self.direction * -1
+
+
 
 
 class Coin(pygame.sprite.Sprite):#
