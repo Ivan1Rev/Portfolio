@@ -60,6 +60,48 @@ class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as wa
         if self.rect.x+50 > window_width or self.rect.x < 0:  # s to make is bounce of the edges
             self.direction = self.direction * -1
 
+        coll = pygame.sprite.spritecollide(self, sprite_group, False, False)
+        #print(coll)
+        if len(coll) > 0:
+            #print("mario:", Mario.rect.y + Mario.size[1], "gobbo", self.rect.y + 50)
+            if Mario.rect.y + Mario.size[1] < self.rect.y+50:
+                self.kill()
+            else:
+                print(Mario.lives)
+                if Mario.lives < 1:
+                    Mario.kill()
+                else:
+                    Mario.lives = Mario.lives - 1
+                    Mario.next_x = 600
+                    Mario.rect.y = 50
+                    Mario.next_y = Mario.rect.y
+                    #Heart.image =
+                if Mario.lives == 1:
+                    Heart.image = pygame.image.load("images/HHeart.png")
+                    Heart.size = Heart.image.get_rect().size
+                    Heart.image = pygame.transform.scale(Heart.image,(int(Heart.size[0] * 0.50), int(Heart.size[1] * 0.50)))
+                if Mario.lives == 0:
+                    Heart.image = pygame.image.load("images/LHeart.png")
+                    Heart.size = Heart.image.get_rect().size
+                    Heart.image = pygame.transform.scale(Heart.image,(int(Heart.size[0] * 0.50), int(Heart.size[1] * 0.50)))
+
+
+
+
+            #pygame.quit()
+
+class Heart(pygame.sprite.Sprite):#
+    def __init__(self):
+        self.costume = 0
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/FHeart.png")
+        self.size = self.image.get_rect().size
+        self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.50), int(self.size[1] * 0.50)))
+        self.size = self.image.get_rect().size
+        self.rect = self.image.get_rect()
+        self.old_size = self.size
+        self.rect.x = 10
+        self.rect.y = 50
 
 
 
@@ -156,6 +198,7 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
         self.animation = False
         self.last_changed = 0
         self.score = 0
+        self.lives = 2
 
 
     def update(self):
@@ -262,6 +305,9 @@ for p in pos:
 bg = pygame.image.load("images/Background.png")
 bg = pygame.transform.scale(bg, (window_width, window_height))
 
+Heart = Heart()
+Heart_group = pygame.sprite.Group()
+Heart_group.add(Heart)
 
 
 Mario = Character_Mario()
@@ -318,6 +364,8 @@ while True:
         coin_group.update()
         sprite_group.update()
         Esprite_group.update()
+        Heart_group.update()
+
 
         draw_score(Mario.score)
         obsticles_group.draw(game_display)
@@ -325,6 +373,7 @@ while True:
         coin_group.draw(game_display)
         sprite_group.draw(game_display)
         Esprite_group.draw(game_display)
+        Heart_group.draw(game_display)
 
     else:
         draw_game_over()
