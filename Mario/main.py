@@ -8,14 +8,16 @@ window_height = 788#display size
 game_display = pygame.display.set_mode((window_width, window_height))#display size
 gravity = 1.2
 GREEN = (0,255,0)
+DGREEN = (0,153,0)
 images = ["marioR1.png","marioR2.png","marioR3.png"]
 image = ["coin1.png","coin2.png","coin3.png","coin4.png","coin5.png","coin4.png","coin3.png","coin2.png","coin1.png"]
 smallfont = pygame.font.SysFont('comicsansms',35)
 bigfont = pygame.font.SysFont('OCR A Extended',150)
+medfont = pygame.font.SysFont('comicsansms',75)
 white = (255, 255, 255)
 green = (0, 255, 0)
 black = (0,0,0)
-
+isMarioDead = False
 
 
 def write_H_score():
@@ -28,6 +30,13 @@ def read_H_score():
     data = f.read()
     f.close()
     return data
+
+def draw_game_over():
+    text = medfont.render("Game Over ", True, DGREEN)
+    game_display.blit(text, [295, 305])
+    text = medfont.render("Game Over ", True, GREEN)
+    game_display.blit(text, [300, 300])
+
 
 
 class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as waht you want aka rock
@@ -54,7 +63,9 @@ class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as wa
         self.direction = random.choice(self.ch)
 
 
+
     def update(self):
+        global isMarioDead
         self.rect.x = self.rect.x + self.direction
 
         if self.rect.x+50 > window_width or self.rect.x < 0:  # s to make is bounce of the edges
@@ -70,6 +81,8 @@ class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as wa
                 print(Mario.lives)
                 if Mario.lives < 1:
                     Mario.kill()
+                    isMarioDead = True
+
                 else:
                     Mario.lives = Mario.lives - 1
                     Mario.next_x = 600
@@ -277,10 +290,7 @@ def draw_score(score):
     text=smallfont.render("Score: "+str(score),True, white)
     game_display.blit(text,[0,0])
 
-def draw_game_over():
-    text=bigfont.render("Game Over ",True, GREEN)
-    pygame.draw.rect(game_display,black, (130,100,850,150))
-    game_display.blit(text, [150, 100])
+
 
 
 def create_new_obsticles(possiton):
@@ -332,7 +342,9 @@ except FileNotFoundError:
     print("file not found")
     write_H_score()
 
-
+def game_over(Gover):
+    text=smallfont.render("GAME OVER",True, white)
+    game_display.blit(text,[0,0])
 
 spawn_new_coin()
 Hitbox = ExtraMario()
@@ -380,6 +392,9 @@ while True:
         if highscore<Mario.score:
             write_H_score()
             print("score")
+
+    if isMarioDead == True:
+        draw_game_over()
 
     pygame.display.update()
 
