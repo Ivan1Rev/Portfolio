@@ -174,7 +174,7 @@ class Coin(pygame.sprite.Sprite):#
 
 
 #updated
-class ExtraMario(pygame.sprite.Sprite):
+class (ExtraMariopygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         #self.image = pygame.Surface((25, 25))
