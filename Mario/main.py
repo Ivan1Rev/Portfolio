@@ -217,7 +217,6 @@ class Character_Mario(pygame.sprite.Sprite):#if clicked on it will choose that a
     def update(self):
         if self.costume > 2:
             self.costume = 0
-
         #animation
         if self.animation == True:
             if pygame.time.get_ticks() - self.last_changed > 60:
