@@ -1,13 +1,9 @@
 import random
 import pygame
 import glob
-import time
-
-
 
 black = (0, 0, 0)
-
-speed = 5
+pygame.init()
 
 window_width = 1074  # display size --- x
 window_height = 788  # display size --- y
@@ -29,62 +25,107 @@ class Body(pygame.sprite.Sprite):  #
 
 
 class Card(pygame.sprite.Sprite):
-    def __init__(self, first,last):
+    def __init__(self, number,row):
         pygame.sprite.Sprite.__init__(self)
+
         self.image = pygame.image.load(random.choice(ls_of_img))  # ls_of_img[random.randint(0,len(ls_of_img)
         self.size = self.image.get_rect().size
-        self.first = first
-        self.last = last
+        self.number = number
         self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.9), int(self.size[1] * 0.9)))
         self.size = self.image.get_rect().size
         self.rect = self.image.get_rect()
         self.old_size = self.size
-        self.rect.x = 315
-        if self.first == True:
-            self.rect.y = 370
-        else:# not the first card
-            self.rect.y = 200  # top
+        self.row = row
+        if self.row == 1 :
+            self.rect.x = 315
+        elif self.row == 2:
+            self.rect.x = 479
+        elif self.row == 3:
+            self.rect.x = 644
+        self.rect.y = 200
         self.card_created = False
+        self.child_created = False
+        self.next_y = self.rect.y
+        self.move = True
+        self.finish_speed = 0.3
+
 
     def update(self):
-        self.rect.y = self.rect.y + controller.first_speed
-        print(self.last)
-        if self.last == False:
-            if self.rect.y > 542 and self.last != True:
+        if self.move == True:
+            self.next_y = self.next_y + controller.first_row_speed
+            self.rect.y = self.next_y
+        if self.move == False and self.rect.y < 370:
+            self.next_y = self.next_y + self.finish_speed
+            print(self.image)
+            self.rect.y = self.next_y
+
+        #print(controller.first_row_speed)
+        if self.number > 0:
+            if self.row == 1:
+                if self.rect.y > 370 and self.child_created == False and controller.first_row_number > 0:
+                    controller.first_row_number = controller.first_row_number - 1
+                    card = Card(controller.first_row_number, self.row)
+                    Card_group.add(card)
+                    self.child_created = True
+
+            elif self.row == 2:
+                if self.rect.y > 370 and self.child_created == False and controller.second_row_number > 0:
+                    controller.second_row_number = controller.second_row_number - 1
+                    card = Card(controller.second_row_number, self.row)
+                    Card_group.add(card)
+                    self.child_created = True
+
+            elif self.row == 3:
+                if self.rect.y > 370 and self.child_created == False and controller.third_row_number > 0:
+                    controller.third_row_number = controller.third_row_number - 1
+                    card = Card(controller.third_row_number, self.row)
+                    Card_group.add(card)
+                    self.child_created = True
+
+
+            if self.rect.y > 530:
                 self.kill()
-            if self.rect.y > 370 and self.card_created == False and self.first == False: #Flag
-                card = Card(False,False)
-                Card_group.add(card)
-                self.card_created = True
-        else:
-            if self.rect.y > 540:
-                self.rect.y = 540
 
 
-
-
-
+        if self.number == 0 and self.rect.y > 340:
+            controller.first_row_speed = 0
+            controller.second_row_number = 0
+            controller.third_row_speed = 0
+            self.move = False
 
 
 class SpinControler():
     def __init__(self):
-        self.first_speed = random.randint(20,25)
-        self.first_row_last_card_created = False
-        card = Card(True,False)
-        Card_group.add(card)
-        card = Card(False,False)
+        self.first_row_number = 12
+        self.first_row_speed = 5
+        self.second_row_number = 12
+        self.second_row_speed = 5
+        self.third_row_number = 12
+        self.third_row_speed = 5
+
+        card = Card(self.first_row_number,1)#THIS IS THE CARD LINE____________________
         Card_group.add(card)
 
+        card = Card(self.second_row_number, 2)  # THIS IS THE CARD LINE____________________
+        Card_group.add(card)
+
+        card = Card(self.third_row_number, 3)  # THIS IS THE CARD LINE____________________
+        Card_group.add(card)
+
+        self.last_frame = pygame.time.get_ticks()
     def update(self):
-       #print(self.first_speed)
-        if self.first_speed < 3:
-            card = Card(False, True)
-            Card_group.add(card)
-            self.first_row_last_card_created = False
-        if self.first_speed > 0:
-            self.first_speed = self.first_speed - 0.03
-        else:
-            self.first_speed = 0
+        self.curr_frame = pygame.time.get_ticks()
+        if self.curr_frame - self.last_frame > 100:
+            print(self.first_row_speed)
+            if self.first_row_speed > 2:
+                self.first_row_speed = self.first_row_speed - 0.1
+                self.last_frame = pygame.time.get_ticks()
+            if self.second_row_speed > 2:
+                self.second_row_speed = self.second_row_speed - 0.1
+                self.last_frame = pygame.time.get_ticks()
+            if self.third_row_speed > 2:
+                self.third_row_speed = self.third_row_speed - 0.1
+                self.last_frame = pygame.time.get_ticks()
 
 
 
@@ -93,7 +134,6 @@ class SpinControler():
 
 
 Card_group = pygame.sprite.Group()
-
 controller = SpinControler()
 
 body = Body()
@@ -108,7 +148,6 @@ Body_group.add(body)
 while True:
     game_display.fill((0, 50, 150))
     x, y = pygame.mouse.get_pos()
-    # print(x, y)
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
