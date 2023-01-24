@@ -379,7 +379,9 @@ while True:
 
 
         draw_score(Mario.score)
+
         obsticles_group.draw(game_display)
+
         ExtraMario.draw(game_display)
         coin_group.draw(game_display)
         sprite_group.draw(game_display)
