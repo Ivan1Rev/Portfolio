@@ -8,12 +8,15 @@ white = (255, 255, 255)
 smallfont = pygame.font.SysFont('Arial',35) #setting up the correct font and size for a score
 black = (0, 0, 0)
 cash = 500
+opacity = 350
 
 window_width = 1074  # display size --- x
 window_height = 788  # display size --- y
 game_display = pygame.display.set_mode((window_width, window_height))  # display size
 ls_of_img = glob.glob("images/items/*")
 ls_of_handle = glob.glob("images/the handle/*")
+
+
 
 
 
@@ -29,12 +32,28 @@ class Body(pygame.sprite.Sprite):  #
         self.rect.x = 275
         self.rect.y = 100
 
+class MMoney(pygame.sprite.Sprite):  #
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/MinusMoney.png")
+        self.size = self.image.get_rect().size
+        self.image = pygame.transform.scale(self.image, (int(self.size[1] / 1), int(self.size[0] / 2.5)))
+        self.size = self.image.get_rect().size
+        self.rect = self.image.get_rect()
+        self.old_size = self.size
+        self.rect.x = 70.5
+        self.rect.y = 30
 
 class Card(pygame.sprite.Sprite):
     def __init__(self, row):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load(random.choice(ls_of_img))  # ls_of_img[random.randint(0,len(ls_of_img)
+        self.random_index = random.randint(0,len(ls_of_img)-1)
+
+
+        #if self.rand_img
+
+        self.image = pygame.image.load(ls_of_img[self.random_index])  # ls_of_img[random.randint(0,len(ls_of_img)
         self.size = self.image.get_rect().size
         self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.9), int(self.size[1] * 0.9)))
         self.size = self.image.get_rect().size
@@ -78,6 +97,7 @@ class Handle(pygame.sprite.Sprite):
 
     def update(self):
         global cash
+        global opacity
         x_mouse = pygame.mouse.get_pos()[0]
         y_mouse = pygame.mouse.get_pos()[1]
         if x_mouse > 820 and x_mouse < 920 and  y_mouse > 250 and y_mouse < 325:
@@ -94,7 +114,12 @@ class Handle(pygame.sprite.Sprite):
                     self.animation_start = False
                     print("last time animation finished at :",pygame.time.get_ticks())
                     self.imageNumber = 0
-                    cash = cash - 50
+                    cash = cash - 10
+                    opacity = 0
+
+
+
+
 
                 else:
                     self.imageNumber = self.imageNumber + 1
@@ -117,11 +142,21 @@ body = Body()
 Body_group = pygame.sprite.Group()
 Body_group.add(body)
 
+mmoney = MMoney()
+MMoney_group = pygame.sprite.Group()
+MMoney_group.add(mmoney)
+
 
 handle = Handle()
 handle_group = pygame.sprite.Group()
 handle_group.add(handle)
 
+
+def draw_rect(alpha):
+    s = pygame.Surface((100, 100))  # the size of your rect
+    s.set_alpha(alpha)  # alpha level
+    s.fill((0, 50, 150))  # this fills the entire surface
+    game_display.blit(s, (50, 40))  # (0,0) are the top-left coordinates
 
 # 536
 while True:
@@ -129,6 +164,9 @@ while True:
     game_display.fill((0, 50, 150))
     x, y = pygame.mouse.get_pos()
     draw_text(cash)
+    opacity = opacity + 5
+
+
 
     #print(x, y)
 
@@ -143,6 +181,7 @@ while True:
     Card_group.update()
     Body_group.update()
     handle_group.update()
+    MMoney_group.update()
 
     x_mouse = pygame.mouse.get_pos()[0]
     y_mouse = pygame.mouse.get_pos()[1]
@@ -161,9 +200,17 @@ while True:
             Card_group.add(card3)
             print(len(Card_group))
 
+            card1I = (ls_of_img[card1.random_index])
+            card2I = (ls_of_img[card2.random_index])
+            card3I = (ls_of_img[card3.random_index])
+            if card1I == card2I:
+                print("YOU WON!")
+
     Card_group.draw(game_display)
     Body_group.draw(game_display)
     handle_group.draw(game_display)
+    MMoney_group.draw(game_display)
+    draw_rect(opacity)
 
     pygame.display.update()
 
