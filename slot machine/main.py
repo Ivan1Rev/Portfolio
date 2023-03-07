@@ -78,7 +78,33 @@ class Card(pygame.sprite.Sprite):
 
 class SpinControler():
     def __init__(self):
-        pass
+        global Card_group
+        self.card1 = Card(1)
+        self.card2 = Card(2)
+        self.card3 = Card(3)
+
+        Card_group = pygame.sprite.Group()
+
+        Card_group.add(self.card1)
+        Card_group.add(self.card2)
+        Card_group.add(self.card3)
+        # (len(Card_group))
+
+        self.card1I = (ls_of_img[self.card1.random_index])
+        self.card2I = (ls_of_img[self.card2.random_index])
+        self.card3I = (ls_of_img[self.card3.random_index])
+
+    def check_win(self):
+        global cash
+        if self.card1I ==self.card2I == self.card3I:
+            print("YOU WON!")
+            cash += 1000
+
+        if self.card1I == self.card2I or self.card3I == self.card1I or self.card2I == self.card3I:
+            print("you got lucky")
+            cash += 100
+
+
 
 class Handle(pygame.sprite.Sprite):
     def __init__(self):
@@ -101,21 +127,23 @@ class Handle(pygame.sprite.Sprite):
         x_mouse = pygame.mouse.get_pos()[0]
         y_mouse = pygame.mouse.get_pos()[1]
         if x_mouse > 820 and x_mouse < 920 and  y_mouse > 250 and y_mouse < 325:
-            #print(pygame.mouse.get_pressed())
             if pygame.mouse.get_pressed()[0] == True:
                 self.animation_start = True
+
+
 
         if self.animation_start == True:
             self.current_tics = pygame.time.get_ticks()
             time_passed = self.current_tics - self.last_ticks
-            #print("last animation:", self.last_ticks, "current ticks",self.current_tics,"Difference",time_passed)
             if time_passed > 150:
                 if self.imageNumber == len(ls_of_handle)-1:
                     self.animation_start = False
-                    print("last time animation finished at :",pygame.time.get_ticks())
+                    self.score_added = False
                     self.imageNumber = 0
                     cash = cash - 10
                     opacity = 0
+                    controller = SpinControler()
+                    controller.check_win()
 
 
 
@@ -150,6 +178,8 @@ MMoney_group.add(mmoney)
 handle = Handle()
 handle_group = pygame.sprite.Group()
 handle_group.add(handle)
+
+Card_group = pygame.sprite.Group()
 
 
 def draw_rect(alpha):
@@ -189,6 +219,8 @@ while True:
     if x_mouse > 820 and x_mouse < 920 and y_mouse > 250 and y_mouse < 325:
         if pygame.mouse.get_pressed()[0] == True:
 
+            '''
+            print("generating cards")
             card1 = Card(1)
             card2 = Card(2)
             card3 = Card(3)
@@ -198,13 +230,26 @@ while True:
             Card_group.add(card1)
             Card_group.add(card2)
             Card_group.add(card3)
-            print(len(Card_group))
+            #(len(Card_group))
 
             card1I = (ls_of_img[card1.random_index])
             card2I = (ls_of_img[card2.random_index])
             card3I = (ls_of_img[card3.random_index])
-            if card1I == card2I:
-                print("YOU WON!")
+    try:
+        if card1I == card2I == card3I and handle.animation_start == False and handle.score_added == False:
+            print("YOU WON!")
+            cash += 1000
+            handle.score_added = True
+        if card1I == card2I or card3I == card1I or card2I == card3I and handle.animation_start == False and handle.score_added == False:
+            print("you got lucky")
+            cash += 100
+            handle.score_added = True
+
+    
+    except NameError:
+        print("class not defined ")
+        
+    '''
 
     Card_group.draw(game_display)
     Body_group.draw(game_display)
