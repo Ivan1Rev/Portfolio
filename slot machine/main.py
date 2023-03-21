@@ -1,14 +1,21 @@
 import random
 import pygame
 import glob
+
 pygame.init()
 
 import time
 white = (255, 255, 255)
+grey = (140, 135, 135)
 smallfont = pygame.font.SysFont('Arial',35) #setting up the correct font and size for a score
+bigfont = pygame.font.SysFont('Cooper Black',75)
 black = (0, 0, 0)
 cash = 500
 opacity = 350
+e1 = 0
+textnum = 0
+
+
 
 window_width = 1074  # display size --- x
 window_height = 788  # display size --- y
@@ -16,6 +23,8 @@ game_display = pygame.display.set_mode((window_width, window_height))  # display
 ls_of_img = glob.glob("images/items/*")
 ls_of_handle = glob.glob("images/the handle/*")
 
+ShowWinningText = False
+ShowWinningText3 = False
 
 
 
@@ -79,6 +88,7 @@ class Card(pygame.sprite.Sprite):
 class SpinControler():
     def __init__(self):
         global Card_group
+
         self.card1 = Card(1)
         self.card2 = Card(2)
         self.card3 = Card(3)
@@ -95,14 +105,17 @@ class SpinControler():
         self.card3I = (ls_of_img[self.card3.random_index])
 
     def check_win(self):
-        global cash
+        global cash,ShowWinningText
+
         if self.card1I ==self.card2I == self.card3I:
             print("YOU WON!")
             cash += 1000
+            ShowWinningText3 = True
 
         if self.card1I == self.card2I or self.card3I == self.card1I or self.card2I == self.card3I:
             print("you got lucky")
             cash += 100
+            ShowWinningText = True
 
 
 
@@ -137,6 +150,7 @@ class Handle(pygame.sprite.Sprite):
             time_passed = self.current_tics - self.last_ticks
             if time_passed > 150:
                 if self.imageNumber == len(ls_of_handle)-1:
+
                     self.animation_start = False
                     self.score_added = False
                     self.imageNumber = 0
@@ -144,6 +158,7 @@ class Handle(pygame.sprite.Sprite):
                     opacity = 0
                     controller = SpinControler()
                     controller.check_win()
+
 
 
 
@@ -159,7 +174,17 @@ def draw_text(text):
     text = smallfont.render("Cash: " + str(text)+ "$", True, white )
     game_display.blit(text, [0, 0])
 
+def draw_WT():
+    text = bigfont.render("YOU WIN!", True, grey)
+    game_display.blit(text, [355, 655])
+    text = bigfont.render("YOU WIN!", True, white )
+    game_display.blit(text, [350, 650])
 
+def draw_WT3():
+    text = bigfont.render("Insane WINNER!!!", True, grey)
+    game_display.blit(text, [225, 655])
+    text = bigfont.render("Insane WINNER!!!", True, white)
+    game_display.blit(text, [220, 650])
        # if x of mouse is in boudries of 820 and 920 and on y axis it's between 250 and 450
 pygame.mouse.get_pressed()
 
@@ -169,6 +194,12 @@ Card_group = pygame.sprite.Group()
 body = Body()
 Body_group = pygame.sprite.Group()
 Body_group.add(body)
+
+
+body = Body()
+Body_group = pygame.sprite.Group()
+Body_group.add(body)
+
 
 mmoney = MMoney()
 MMoney_group = pygame.sprite.Group()
@@ -197,6 +228,19 @@ while True:
     opacity = opacity + 5
 
 
+    if ShowWinningText == True:
+        draw_WT()
+        textnum += 1
+        if textnum > 500:
+            ShowWinningText = False
+            textnum = 0
+
+    if ShowWinningText3 == True:
+        draw_WT3()
+        textnum += 1
+        if textnum > 500:
+            ShowWinningText3 = False
+            textnum = 0
 
     #print(x, y)
 
@@ -205,6 +249,18 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
+
+            if event.key == pygame.K_e:
+                ShowWinningText3 = True
+
+            if event.key == pygame.K_r:
+                ShowWinningText = True
+
+            if event.key == pygame.K_t:
+                cash = cash + 100
+
+
+
 
 
 
