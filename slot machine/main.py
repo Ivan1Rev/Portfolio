@@ -22,6 +22,7 @@ window_height = 788  # display size --- y
 game_display = pygame.display.set_mode((window_width, window_height))  # display size
 ls_of_img = glob.glob("images/items/*")
 ls_of_handle = glob.glob("images/the handle/*")
+ls_of_money = glob.glob("images/money/*")
 
 ShowWinningText = False
 ShowWinningText3 = False
@@ -117,6 +118,40 @@ class SpinControler():
             cash += 100
             ShowWinningText = True
 
+class MoneyAnim(pygame.sprite.Sprite):
+    def __init__(self):
+        self.imageNumber = 0
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(ls_of_money[self.imageNumber])
+        self.size = self.image.get_rect().size
+        self.image = pygame.transform.scale(self.image, (int(self.size[0] * 0.50), int(self.size[1] * 0.50)))
+        #self.size = self.image.get_rect().size
+        self.rect = self.image.get_rect()
+        self.rect.x = -50
+        self.rect.y = 300
+        self.animation_start = False
+        self.last_ticks = 0
+        self.current_tics = 0
+
+
+    def update(self):
+        global ShowWinningText3
+        if ShowWinningText3:
+            self.current_tics = pygame.time.get_ticks()
+            time_passed = self.current_tics - self.last_ticks
+            if time_passed > 20:
+                if self.imageNumber == len(ls_of_money) - 1:
+                    self.animation_start = False
+                else:
+                    self.imageNumber = self.imageNumber + 1
+                    self.image = pygame.image.load(ls_of_money[self.imageNumber])
+                    self.image = pygame.transform.scale(self.image,(int(self.size[0] * 0.5), int(self.size[1] * 0.5)))
+                self.last_ticks = pygame.time.get_ticks()
+        else:
+            self.imageNumber = 0
+
+
+
 
 
 class Handle(pygame.sprite.Sprite):
@@ -159,11 +194,6 @@ class Handle(pygame.sprite.Sprite):
                     controller = SpinControler()
                     controller.check_win()
 
-
-
-
-
-
                 else:
                     self.imageNumber = self.imageNumber + 1
                     self.image = pygame.image.load(ls_of_handle[self.imageNumber])
@@ -194,6 +224,13 @@ Card_group = pygame.sprite.Group()
 body = Body()
 Body_group = pygame.sprite.Group()
 Body_group.add(body)
+
+
+moneyanim = MoneyAnim()
+moneyanim_group = pygame.sprite.Group()
+moneyanim_group.add(moneyanim)
+
+
 
 
 body = Body()
@@ -268,6 +305,7 @@ while True:
     Body_group.update()
     handle_group.update()
     MMoney_group.update()
+    moneyanim_group.update()
 
     x_mouse = pygame.mouse.get_pos()[0]
     y_mouse = pygame.mouse.get_pos()[1]
@@ -311,6 +349,8 @@ while True:
     Body_group.draw(game_display)
     handle_group.draw(game_display)
     MMoney_group.draw(game_display)
+    if ShowWinningText3 == True:
+        moneyanim_group.draw(game_display)
     draw_rect(opacity)
 
     pygame.display.update()
