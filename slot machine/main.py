@@ -1,8 +1,17 @@
 import random
 import pygame
 import glob
+from pygame import mixer
 
 pygame.init()
+mixer.init()
+#mixer.music.load("music/game over.mp3")
+GO_sound = pygame.mixer.Sound("music/game over.mp3")
+#mixer.music.set_volume(0.3)
+handle_sound = pygame.mixer.Sound("music/handle pulled.mp3")
+
+
+e = 0
 
 import time
 white = (255, 255, 255)
@@ -23,6 +32,11 @@ game_display = pygame.display.set_mode((window_width, window_height))  # display
 ls_of_img = glob.glob("images/items/*")
 ls_of_handle = glob.glob("images/the handle/*")
 ls_of_money = glob.glob("images/money/*")
+
+
+GOimage = pygame.image.load("images/GameOver.png")
+GOimage = pygame.transform.scale(GOimage, (window_width, window_height))
+
 
 ShowWinningText = False
 ShowWinningText3 = False
@@ -51,7 +65,7 @@ class MMoney(pygame.sprite.Sprite):  #
         self.size = self.image.get_rect().size
         self.rect = self.image.get_rect()
         self.old_size = self.size
-        self.rect.x = 70.5
+        self.rect.x = 45
         self.rect.y = 30
 
 class Card(pygame.sprite.Sprite):
@@ -105,6 +119,13 @@ class SpinControler():
         self.card2I = (ls_of_img[self.card2.random_index])
         self.card3I = (ls_of_img[self.card3.random_index])
 
+        self.card1I = self.card1I.replace(" ", "")
+        self.card2I = self.card2I.replace(" ", "")
+        self.card3I = self.card3I.replace(" ", "")
+
+
+        print(self.card1I)
+
     def check_win(self):
         global cash,ShowWinningText
 
@@ -115,7 +136,7 @@ class SpinControler():
 
         if self.card1I == self.card2I or self.card3I == self.card1I or self.card2I == self.card3I:
             print("you got lucky")
-            cash += 100
+            cash += 50
             ShowWinningText = True
 
 class MoneyAnim(pygame.sprite.Sprite):
@@ -177,6 +198,7 @@ class Handle(pygame.sprite.Sprite):
         if x_mouse > 820 and x_mouse < 920 and  y_mouse > 250 and y_mouse < 325:
             if pygame.mouse.get_pressed()[0] == True:
                 self.animation_start = True
+                pygame.mixer.Sound.play(handle_sound)
 
 
 
@@ -189,7 +211,7 @@ class Handle(pygame.sprite.Sprite):
                     self.animation_start = False
                     self.score_added = False
                     self.imageNumber = 0
-                    cash = cash - 10
+                    cash = cash - 20
                     opacity = 0
                     controller = SpinControler()
                     controller.check_win()
@@ -294,7 +316,22 @@ while True:
                 ShowWinningText = True
 
             if event.key == pygame.K_t:
-                cash = cash + 100
+                cash = cash + 50
+
+            if event.key == pygame.K_w:
+                cash = cash - 50
+
+            if event.key == pygame.K_q:
+                cash = 500
+                e = 0
+                pygame.mixer.Sound.stop(GO_sound)
+
+
+    def draw_GO():
+            GOt = bigfont.render("", True, white)
+            game_display.blit(GOt, [500, 500])
+            game_display.blit(GOimage, (000, 000))
+
 
 
 
@@ -352,6 +389,13 @@ while True:
     if ShowWinningText3 == True:
         moneyanim_group.draw(game_display)
     draw_rect(opacity)
+    if cash < 1:
+        draw_GO()
+        if e < 1:
+            #pygame.mixer.find_channel().pause(sound1)
+            pygame.mixer.Sound.play(GO_sound)
+            #mixer.music.play()
+            e = e + 1
 
     pygame.display.update()
 
