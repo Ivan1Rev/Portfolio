@@ -8,10 +8,15 @@ mixer.init()
 #mixer.music.load("music/game over.mp3")
 GO_sound = pygame.mixer.Sound("music/game over.mp3")
 #mixer.music.set_volume(0.3)
-handle_sound = pygame.mixer.Sound("music/handle pulled.mp3")
+mixer.music.load("music/handle pullednew.mp3")
+handle_sound = pygame.mixer.Sound("music/handle pullednew.mp3")
 
-
-e = 0
+tot = 0
+vov = 0
+MusicPlayed = 0
+last_ticks = 0
+current_tics = 0
+game_over = False
 
 import time
 white = (255, 255, 255)
@@ -192,13 +197,20 @@ class Handle(pygame.sprite.Sprite):
 
     def update(self):
         global cash
+        global vov
         global opacity
         x_mouse = pygame.mouse.get_pos()[0]
         y_mouse = pygame.mouse.get_pos()[1]
         if x_mouse > 820 and x_mouse < 920 and  y_mouse > 250 and y_mouse < 325:
             if pygame.mouse.get_pressed()[0] == True:
                 self.animation_start = True
-                pygame.mixer.Sound.play(handle_sound)
+                if vov < 1:
+                    pygame.mixer.Sound.play(handle_sound)
+                    print("playing again")
+                    vov = vov + 1
+            if pygame.mouse.get_pressed()[0] == False:
+                vov = 0
+
 
 
 
@@ -324,11 +336,12 @@ while True:
             if event.key == pygame.K_q:
                 cash = 500
                 e = 0
+                tot = 0
                 pygame.mixer.Sound.stop(GO_sound)
 
 
     def draw_GO():
-            GOt = bigfont.render("", True, white)
+            GOt = bigfont.render("GAME OVER", True, white)
             game_display.blit(GOt, [500, 500])
             game_display.blit(GOimage, (000, 000))
 
@@ -382,6 +395,7 @@ while True:
         
     '''
 
+
     Card_group.draw(game_display)
     Body_group.draw(game_display)
     handle_group.draw(game_display)
@@ -390,12 +404,22 @@ while True:
         moneyanim_group.draw(game_display)
     draw_rect(opacity)
     if cash < 1:
+        current_tics = pygame.time.get_ticks()
+        time_passed = current_tics - last_ticks
+        if time_passed > 1000:
+            print(time_passed)
+            print("Gmaeover")
+            MusicPlayed += 1
+            if MusicPlayed == 1:
+                pygame.mixer.Sound.play(GO_sound)
+            if MusicPlayed == 2:
+                game_over = True
+            last_ticks = pygame.time.get_ticks()
+
+
+
+    if game_over:
         draw_GO()
-        if e < 1:
-            #pygame.mixer.find_channel().pause(sound1)
-            pygame.mixer.Sound.play(GO_sound)
-            #mixer.music.play()
-            e = e + 1
 
     pygame.display.update()
 
