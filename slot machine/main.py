@@ -10,9 +10,12 @@ GO_sound = pygame.mixer.Sound("music/game over.mp3")
 #mixer.music.set_volume(0.3)
 mixer.music.load("music/handle pullednew.mp3")
 handle_sound = pygame.mixer.Sound("music/handle pullednew.mp3")
+winning2 = pygame.mixer.Sound("music/winning sound.mp3")
+winning3 = pygame.mixer.Sound("music/wing sound3.mp3")
 
-tot = 0
+
 vov = 0
+Winsound = 0
 MusicPlayed = 0
 last_ticks = 0
 current_tics = 0
@@ -135,12 +138,14 @@ class SpinControler():
         global cash,ShowWinningText
 
         if self.card1I ==self.card2I == self.card3I:
+            pygame.mixer.Sound.play(winning3)
             print("YOU WON!")
             cash += 1000
             ShowWinningText3 = True
 
         if self.card1I == self.card2I or self.card3I == self.card1I or self.card2I == self.card3I:
             print("you got lucky")
+            pygame.mixer.Sound.play(winning2)
             cash += 50
             ShowWinningText = True
 
@@ -304,7 +309,10 @@ while True:
         textnum += 1
         if textnum > 500:
             ShowWinningText = False
+
+
             textnum = 0
+
 
     if ShowWinningText3 == True:
         draw_WT3()
@@ -335,8 +343,9 @@ while True:
 
             if event.key == pygame.K_q:
                 cash = 500
-                e = 0
-                tot = 0
+                game_over = False
+
+
                 pygame.mixer.Sound.stop(GO_sound)
 
 
@@ -406,7 +415,7 @@ while True:
     if cash < 1:
         current_tics = pygame.time.get_ticks()
         time_passed = current_tics - last_ticks
-        if time_passed > 1000:
+        if time_passed > 500:
             print(time_passed)
             print("Gmaeover")
             MusicPlayed += 1
