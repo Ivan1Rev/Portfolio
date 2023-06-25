@@ -1,0 +1,7 @@
+1. needs animation for enemies
+2. need a sprite for the enemy bullet(2 different types)
+3. need a sprite for a boss
+4. ending/finihsing screen
+5. need a lives images(like fading hearts or something)
+6. needs a starting screen as if an old retro arcarde
+7.pixel writing

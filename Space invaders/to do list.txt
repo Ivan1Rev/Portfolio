@@ -1,0 +1,7 @@
+1. find player sprite
+2. find wall/obsticle sprite
+3. find background
+4. find music/sounds
+5. find sprite for bullets/pellets
+6. find boss sprite
+7. health bar image
