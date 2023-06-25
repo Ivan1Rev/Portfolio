@@ -3,6 +3,7 @@ import pygame
 import glob
 from pygame import mixer
 
+
 pygame.init()
 mixer.init()
 #mixer.music.load("music/game over.mp3")
@@ -170,14 +171,14 @@ class MoneyAnim(pygame.sprite.Sprite):
         if ShowWinningText3:
             self.current_tics = pygame.time.get_ticks()
             time_passed = self.current_tics - self.last_ticks
-            if time_passed > 20:
+            if time_passed > 20: #Saves the tics and then deletes that number from the original if it is greater than 20
                 if self.imageNumber == len(ls_of_money) - 1:
                     self.animation_start = False
                 else:
                     self.imageNumber = self.imageNumber + 1
                     self.image = pygame.image.load(ls_of_money[self.imageNumber])
                     self.image = pygame.transform.scale(self.image,(int(self.size[0] * 0.5), int(self.size[1] * 0.5)))
-                self.last_ticks = pygame.time.get_ticks()
+                self.last_ticks = self.current_tics
         else:
             self.imageNumber = 0
 
@@ -220,7 +221,7 @@ class Handle(pygame.sprite.Sprite):
 
 
         if self.animation_start == True:
-            self.current_tics = pygame.time.get_ticks()
+            self.current_.tics = pygame_time.get_ticks()
             time_passed = self.current_tics - self.last_ticks
             if time_passed > 150:
                 if self.imageNumber == len(ls_of_handle)-1:

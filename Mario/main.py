@@ -64,6 +64,8 @@ class EnemyGoomba(pygame.sprite.Sprite):#if clicked on it will choose that as wa
 
 
 
+
+
     def update(self):
         global isMarioDead
         self.rect.x = self.rect.x + self.direction
@@ -174,7 +176,7 @@ class Coin(pygame.sprite.Sprite):#
 
 
 #updated
-class (ExtraMariopygame.sprite.Sprite):
+class(ExtraMariopygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         #self.image = pygame.Surface((25, 25))
