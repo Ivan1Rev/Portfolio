@@ -1,19 +1,20 @@
-import random
 import pygame
-import glob
-
 
 
 window_width = 1074  # display size --- x
 window_height = 788  # display size --- y
 game_display = pygame.display.set_mode((window_width, window_height))  # display size
 
+FPS = 120
+clock = pygame.time.Clock()
 
 
 class Enemy(pygame.sprite.Sprite):  #
     def __init__(self,positional_order,row_order):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("images/main_enemy_1.png")
+        self.picture = "images/main_enemy_1.png"
+        self.image = pygame.image.load(self.picture)
+
         self.size = self.image.get_rect().size
         self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
         self.size = self.image.get_rect().size
@@ -36,10 +37,9 @@ class Enemy(pygame.sprite.Sprite):  #
     def update(self):
         self.frame += 1
         self.frames_passed = self.frame - self.last_frame
-
-
         print(self.frames_passed)
         if self.frames_passed > 60:
+            self.next_constume() #NEXT COST
             self.rect.x = self.rect.x + self.delta
             self.steps = self.steps + 1
             self.last_frame = self.frame
@@ -49,6 +49,18 @@ class Enemy(pygame.sprite.Sprite):  #
                 self.steps = 0
                 self.delta = self.delta * -1
                 self.check_steps = 40
+
+    def next_constume(self):
+        if self.picture == "images/main_enemy_1.png":
+            self.picture ="images/main_enemy_2.png"
+            self.image = pygame.image.load(self.picture)
+            self.size = self.image.get_rect().size
+            self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
+        else:
+            self.picture = "images/main_enemy_1.png"
+            self.image = pygame.image.load(self.picture)
+            self.size = self.image.get_rect().size
+            self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
 
 
 
@@ -78,6 +90,7 @@ for cat in range(5):
 
 
 while True:
+    clock.tick(FPS)
     game_display.blit(bg, (0, 0))
 
 
