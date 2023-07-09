@@ -13,7 +13,7 @@ game_display = pygame.display.set_mode((window_width, window_height))  # display
 class Enemy(pygame.sprite.Sprite):  #
     def __init__(self,positional_order,row_order):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("images/main enemy.png")
+        self.image = pygame.image.load("images/main_enemy_1.png")
         self.size = self.image.get_rect().size
         self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
         self.size = self.image.get_rect().size
@@ -34,29 +34,22 @@ class Enemy(pygame.sprite.Sprite):  #
 
 
     def update(self):
-
         self.frame += 1
         self.frames_passed = self.frame - self.last_frame
-#        print("frames passeed = ",self.frames_passed, "curr frame = ", self.frame, "last frame = ",self.last_frame)
+
+
+        print(self.frames_passed)
         if self.frames_passed > 60:
             self.rect.x = self.rect.x + self.delta
             self.steps = self.steps + 1
             self.last_frame = self.frame
 
-
             if self.steps > self.check_steps:
-#                if self.num > 1:
-#                    self.rect.y += 20
-#                    self.num = self.num + 1
-#                else:
                 self.rect.y += 40
                 self.steps = 0
                 self.delta = self.delta * -1
                 self.check_steps = 40
 
-#            print("if")
-#        else:
-#            print("else")
 
 
 board = [
