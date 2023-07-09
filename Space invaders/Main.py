@@ -50,6 +50,7 @@ class Enemy(pygame.sprite.Sprite):  #
                 self.delta = self.delta * -1
                 self.check_steps = 40
 
+
     def next_constume(self):
         if self.picture == "images/main_enemy_1.png":
             self.picture ="images/main_enemy_2.png"
@@ -62,7 +63,18 @@ class Enemy(pygame.sprite.Sprite):  #
             self.size = self.image.get_rect().size
             self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
 
-
+class Player (pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.picture = "images/shooter.png"
+        self.image = pygame.image.load(self.picture)
+        self.size = self.image.get_rect().size
+        self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
+        self.size = self.image.get_rect().size
+        self.rect = self.image.get_rect()
+        self.old_size = self.size
+        self.rect.x = 100
+        self.rect.y = 100
 
 board = [
     [0,0,0],
@@ -88,13 +100,22 @@ for cat in range(5):
 
 
 
+player = Player()
+player_group = pygame.sprite.Group()
+player_group.add(player)
 
 while True:
+
+
+
     clock.tick(FPS)
     game_display.blit(bg, (0, 0))
 
 
     Enemy_group.update()
+    Enemy_group.draw(game_display)
+
+    player_group.update()
     Enemy_group.draw(game_display)
 
     for event in pygame.event.get():
