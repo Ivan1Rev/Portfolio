@@ -39,7 +39,7 @@ class Enemy(pygame.sprite.Sprite):  #
     def update(self):
         self.frame += 1
         self.frames_passed = self.frame - self.last_frame
-        print(self.frames_passed)
+        #print(self.frames_passed)
         if self.frames_passed > 60:
             self.next_constume() #NEXT COST
             self.rect.x = self.rect.x + self.delta
@@ -100,11 +100,16 @@ class Bullet (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.old_size = self.size
         self.rect.x = player.rect.x + 80
-        self.rect.y = player.rect.y 
+        self.rect.y = player.rect.y
+
 
 
     def update(self):
+        global Enemy_group
         self.rect.y = self.rect.y - 5
+        coll = pygame.sprite.spritecollide(self,Enemy_group,True)
+        if coll:
+            self.kill()
 
 
 
