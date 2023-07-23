@@ -30,6 +30,8 @@ class Enemy(pygame.sprite.Sprite):  #
         self.delta = -7
         self.num = 0
         self.check_steps = 20
+        self.pic_1 = pygame.image.load("images/main_enemy_1.png")
+        self.pic_2 = pygame.image.load("images/main_enemy_2.png")
 
 
 
@@ -54,12 +56,12 @@ class Enemy(pygame.sprite.Sprite):  #
     def next_constume(self):
         if self.picture == "images/main_enemy_1.png":
             self.picture ="images/main_enemy_2.png"
-            self.image = pygame.image.load(self.picture)
+            self.image = self.pic_2 #
             self.size = self.image.get_rect().size
             self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
         else:
             self.picture = "images/main_enemy_1.png"
-            self.image = pygame.image.load(self.picture)
+            self.image = self.pic_1
             self.size = self.image.get_rect().size
             self.image = pygame.transform.scale(self.image, (int(self.size[0] / 15), int(self.size[1] / 15)))
 
@@ -67,7 +69,7 @@ class Player (pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.picture = "images/shooter.png"
-        self.image = pygame.image.load(self.picture)
+        self.image = pygame.image.load(self.picture) #
         self.size = self.image.get_rect().size
         self.image = pygame.transform.scale(self.image, (int(self.size[0]), int(self.size[1])))
         self.size = self.image.get_rect().size
