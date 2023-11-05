@@ -5,6 +5,8 @@ window_width = 1074  # display size --- x
 window_height = 788  # display size --- y
 game_display = pygame.display.set_mode((window_width, window_height))  # display size
 
+
+tlbc = 0
 FPS = 120
 clock = pygame.time.Clock()
 
@@ -67,6 +69,7 @@ class Enemy(pygame.sprite.Sprite):  #
 
 class Player (pygame.sprite.Sprite):
     def __init__(self):
+        self.enemy_count = 0
         pygame.sprite.Sprite.__init__(self)
         self.picture = "images/shooter.png"
         self.image = pygame.image.load(self.picture) #
@@ -80,10 +83,10 @@ class Player (pygame.sprite.Sprite):
 
 
     def right(self):
-        self.rect.x = self.rect.x + 10
+        self.rect.x = self.rect.x + 2
 
     def left(self):
-        self.rect.x = self.rect.x - 10
+        self.rect.x = self.rect.x - 2
 
 
 #    def update(self):
@@ -109,7 +112,10 @@ class Bullet (pygame.sprite.Sprite):
         self.rect.y = self.rect.y - 5
         coll = pygame.sprite.spritecollide(self,Enemy_group,True)
         if coll:
+            player.enemy_count += 1
             self.kill()
+
+
 
 
 
@@ -137,18 +143,29 @@ bullet_group = pygame.sprite.Group()
 
 
 while True:
+    #print(player.enemy_count)
+    keys = pygame.key.get_pressed()
+    tlbc = tlbc + 1
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
-            if event.key==pygame.K_d:
-              player.right()
-            if event.key==pygame.K_a:
-              player.left()
-            if event.key==pygame.K_SPACE:
-                bullet = Bullet()
-                bullet_group.add(bullet)
+    if keys[pygame.K_d]:
+        player.right()
+    if keys[pygame.K_a]:
+        player.left()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        if tlbc >= 150:
+            bullet = Bullet()
+            bullet_group.add(bullet)
+            tlbc = 0
+
+
+
+
 
 
 
