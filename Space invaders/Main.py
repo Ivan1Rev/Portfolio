@@ -1,14 +1,21 @@
 import pygame
-
+pygame.font.init()
 
 window_width = 1074  # display size --- x
 window_height = 788  # display size --- y
 game_display = pygame.display.set_mode((window_width, window_height))  # display size
+red = (255,0,0)
 
+enemy_count = 0
 
 tlbc = 0
 FPS = 120
 clock = pygame.time.Clock()
+
+def drawtext2(text, x, y, color, size): #font
+    myfont = pygame.font.SysFont('Algerian', size)#font
+    textsurface = myfont.render(text,False, color)
+    game_display.blit(textsurface,(x, y))
 
 
 class Enemy(pygame.sprite.Sprite):  #
@@ -109,10 +116,14 @@ class Bullet (pygame.sprite.Sprite):
 
     def update(self):
         global Enemy_group
+        global enemy_count
         self.rect.y = self.rect.y - 5
         coll = pygame.sprite.spritecollide(self,Enemy_group,True)
         if coll:
-            player.enemy_count += 1
+            enemy_count += 1
+            print(enemy_count)
+
+
             self.kill()
 
 
@@ -143,7 +154,7 @@ bullet_group = pygame.sprite.Group()
 
 
 while True:
-    #print(player.enemy_count)
+    #print(enemy_count)
     keys = pygame.key.get_pressed()
     tlbc = tlbc + 1
     for event in pygame.event.get():
@@ -171,6 +182,7 @@ while True:
 
 
 
+
     clock.tick(FPS)
     game_display.blit(bg, (0, 0))
 
@@ -185,4 +197,5 @@ while True:
     bullet_group.update()
     bullet_group.draw(game_display)
 
+    drawtext2("score = " + str(round(enemy_count, 2)), 25, 745, red, 60)
     pygame.display.update()

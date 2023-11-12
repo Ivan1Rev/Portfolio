@@ -9,10 +9,7 @@ pink = (255, 102, 179)
 gravity = 0.5
 
 
-def drawtext(text, x, y, color, size): #font 
-    myfont = pygame.font.SysFont('Mongolian Baiti', size)#font
-    textsurface = myfont.render(text,False, color)
-    game_display.blit(textsurface,(x, y))
+
 
 
 def drawtext2(text, x, y, color, size): #font 
@@ -54,7 +51,7 @@ class Character_bird(pygame.sprite.Sprite):#if clicked on it will choose that as
 
 
     def jump(self):
-        self.next_y = self.next_y - 50
+        self.next_y = self.next_y - 100
         self.rect.y = self.next_y
 
 
@@ -131,7 +128,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
     if game.disp_text == True:
-        drawtext("Bro your trash at the game.",450,100,red,30)
+        drawtext2("Bro your trash at the game.",450,100,red,30)
     sprite_group.update()
     obsticles_group.update()
     sprite_group.draw(game_display)
