@@ -1,4 +1,4 @@
-import pygame
+import pygame, time
 pygame.font.init()
 
 window_width = 1074  # display size --- x
@@ -11,6 +11,7 @@ enemy_count = 0
 tlbc = 0
 FPS = 120
 clock = pygame.time.Clock()
+
 
 def drawtext2(text, x, y, color, size): #font
     myfont = pygame.font.SysFont('Algerian', size)#font
@@ -128,6 +129,25 @@ class Bullet (pygame.sprite.Sprite):
 
 
 
+class Barrier (pygame.sprite.Sprite):
+    def __init__ (self,x,y,flip):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/barriers/barrier.png")
+        self.size = self.image.get_rect().size
+        self.image=pygame.transform.scale(self.image,(int(self.size[0]/3),int(self.size[1]/3)))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.next_x = self.rect.x
+
+    def update(self):
+        collnum = 0
+        coll = pygame.sprite.spritecollide(self, bullet_group, False)
+        print(coll)
+        if coll:
+            time.sleep(1)
+            coll[0].kill()
+            collnum = collnum + 1
 
 
 Enemy_group = pygame.sprite.Group()
@@ -140,8 +160,15 @@ for cat in range(5):
     for i in range(10):
         enemy = Enemy(i,cat)
         Enemy_group.add(enemy)
+def create_new_obsticles(possiton):
+    bar = Barrier(possiton[0],possiton[1], False)#550,350
+    Barrier_group.add(bar)
 
 
+Barrier_group = pygame.sprite.Group()
+
+
+obsticles_group = pygame.sprite.Group()
 
 player = Player()
 player_group = pygame.sprite.Group()
@@ -150,7 +177,12 @@ player_group.add(player)
 
 bullet_group = pygame.sprite.Group()
 
+pos = [[150,550],
+       [450,550],
+       [750,550]]
 
+for p in pos:
+    create_new_obsticles(p)
 
 
 while True:
@@ -178,11 +210,6 @@ while True:
 
 
 
-
-
-
-
-
     clock.tick(FPS)
     game_display.blit(bg, (0, 0))
 
@@ -193,6 +220,8 @@ while True:
     player_group.update()
     player_group.draw(game_display)
 
+    Barrier_group.update()
+    Barrier_group.draw(game_display)
 
     bullet_group.update()
     bullet_group.draw(game_display)
