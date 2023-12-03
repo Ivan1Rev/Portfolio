@@ -8,10 +8,12 @@ red = (255,0,0)
 
 enemy_count = 0
 
+collnum = 0
 tlbc = 0
 FPS = 120
 clock = pygame.time.Clock()
-
+barrierD = ["barrier.png","barrier_1D.png","barrier_2D.png","barrier_3D.png","barrier_4D.png","barrier_5D.png", ]
+#("images/barriers/barrier.png")
 
 def drawtext2(text, x, y, color, size): #font
     myfont = pygame.font.SysFont('Algerian', size)#font
@@ -132,22 +134,32 @@ class Bullet (pygame.sprite.Sprite):
 class Barrier (pygame.sprite.Sprite):
     def __init__ (self,x,y,flip):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("images/barriers/barrier.png")
+        self.barriercostume = 0
+        self.image = pygame.image.load(f"images/barriers/{barrierD[self.barriercostume]}")
         self.size = self.image.get_rect().size
         self.image=pygame.transform.scale(self.image,(int(self.size[0]/3),int(self.size[1]/3)))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.next_x = self.rect.x
+        self.health = 5
+
+
 
     def update(self):
-        collnum = 0
         coll = pygame.sprite.spritecollide(self, bullet_group, False)
-        print(coll)
+        self.image = pygame.image.load(f"images/barriers/{barrierD[self.barriercostume]}")
+        self.size = self.image.get_rect().size
+        self.image = pygame.transform.scale(self.image, (int(self.size[0] / 3), int(self.size[1] / 3)))
+        self.rect = self.image.get_rect()
+        self.next_x = self.rect.x
         if coll:
-            time.sleep(1)
             coll[0].kill()
-            collnum = collnum + 1
+            self.health = self.health - 1
+            if self.health == 0:
+                self.barriercostume += 1
+                print("Working")
+                self.health = 5
 
 
 Enemy_group = pygame.sprite.Group()
