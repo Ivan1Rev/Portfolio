@@ -12,7 +12,9 @@ collnum = 0
 tlbc = 0
 FPS = 120
 clock = pygame.time.Clock()
-barrierD = ["barrier.png","barrier_1D.png","barrier_2D.png","barrier_3D.png","barrier_4D.png","barrier_5D.png", ]
+barrierD = ["barrier.png","barrier_1D.png","barrier_2D.png","barrier_3D.png","barrier_4D.png","barrier_5D.png"]
+boom = ["boom1.png","boom2.png","boom3.png","boom4.png","boom5.png","boom5.png","boom6.png","boom7.png","boom8.png",
+        "boom9.png"]
 #("images/barriers/barrier.png")
 
 def drawtext2(text, x, y, color, size): #font
@@ -129,6 +131,19 @@ class Bullet (pygame.sprite.Sprite):
 
             self.kill()
 
+class Boom (pygame.sprite.Sprite):
+# todo init boom when barrier dies
+    def __init__ (self,x,y,flip):
+        pygame.sprite.Sprite.__init__(self)
+        self.boomcostume = 0
+        self.image = pygame.image.load(f"images/boom/{boom[self.baoomcostume]}")
+        self.size = self.image.get_rect().size
+        self.image=pygame.transform.scale(self.image,(int(self.size[0]/3),int(self.size[1]/3)))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
 
 
 class Barrier (pygame.sprite.Sprite):
@@ -141,7 +156,8 @@ class Barrier (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.next_x = self.rect.x
+        # self.next_x = self.rect.x
+        # self.next_y = self.rect.y
         self.health = 5
 
 
@@ -151,8 +167,11 @@ class Barrier (pygame.sprite.Sprite):
         self.image = pygame.image.load(f"images/barriers/{barrierD[self.barriercostume]}")
         self.size = self.image.get_rect().size
         self.image = pygame.transform.scale(self.image, (int(self.size[0] / 3), int(self.size[1] / 3)))
-        self.rect = self.image.get_rect()
-        self.next_x = self.rect.x
+        # self.rect = self.image.get_rect()
+        # self.next_x = self.rect.x
+        # self.next_y = self.rect.y
+        if self.barriercostume >= 5:
+            self.kill()
         if coll:
             coll[0].kill()
             self.health = self.health - 1
@@ -172,8 +191,10 @@ for cat in range(5):
     for i in range(10):
         enemy = Enemy(i,cat)
         Enemy_group.add(enemy)
-def create_new_obsticles(possiton):
-    bar = Barrier(possiton[0],possiton[1], False)#550,350
+
+
+def create_new_obsticles(possition):
+    bar = Barrier(possition[0],possition[1], False)#550,350
     Barrier_group.add(bar)
 
 
@@ -240,3 +261,6 @@ while True:
 
     drawtext2("score = " + str(round(enemy_count, 2)), 25, 745, red, 60)
     pygame.display.update()
+
+
+#C:\Users\Revia\Portfolio\Space invaders
