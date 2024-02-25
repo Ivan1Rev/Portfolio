@@ -237,7 +237,7 @@ def create_new_bullet(posiiton):
 
 
 def create_new_obsticles(possition):
-    bar = Barrier(possition[0], possition[1], False)
+    bar = Barrier(possition[0], possition[1])
     Barrier_group.add(bar)
 
 
